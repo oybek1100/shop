@@ -89,9 +89,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 DATABASES = {
-    "default": dj_database_url.config(
+    'default': dj_database_url.config(
+        default=os.getenv("DATABASE_URL"),  # <-- BU SHART!
         conn_max_age=600,
-        ssl_require=False  # Railway uchun bu yerda False bo‘ladi
+        ssl_require=False
     )
 }
 
