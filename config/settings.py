@@ -89,8 +89,20 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 DATABASES = {
-    'default': dj_database_url.config(conn_max_age=600)
+    'default': dj_database_url.config(default=config('DATABASE_URL'), conn_max_age=600)
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'shop',  # Replace with your PostgreSQL database name
+#         'USER': 'postgres',  # Replace with your PostgreSQL username
+#         'PASSWORD': '123',  # Replace with your PostgreSQL password
+#         'HOST': 'localhost',  # Or the IP address/hostname of your PostgreSQL server
+#         'PORT': '5432',  # Default PostgreSQL port
+#     }
+# }
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
