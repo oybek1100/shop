@@ -1,0 +1,196 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <title>Shop Homepage - Start Bootstrap Template</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'shop/images/favicon.ico' %}" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <link href="{% static 'shop/css/styles.css' %}" rel="stylesheet" />
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="{% url 'shop:index' %}">MyShop</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                <li class="nav-item"><a class="nav-link active" href="{% url 'shop:index' %}">Home</a></li>
+        
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">Categories</a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'shop:index' %}">All Products</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        {% for category in categories %}
+                            <li><a class="dropdown-item" href="{% url 'shop:category_products' category.id %}">{{ category.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+            </ul>
+
+            <!-- Search -->
+                <form class="d-flex" method="get">
+                    <input type="text" class="form-control form-control-sm me-2" name="search" placeholder="Search...">
+                    <button class="btn btn-outline-dark btn-sm" type="submit">
+                        <i class="bi-search"></i>
+                        Search
+                    </button>
+                </form>
+
+                
+
+
+            <!-- Auth buttons -->
+           {% if user.is_authenticated %}
+                <!-- Foydalanuvchi ismi yoki emaili -->
+          
+
+                <form action="{% url 'users:logout' %}" method="post" class="ms-1">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary btn-sm">Log out</button>
+                </form>
+                   <span class="badge bg-secondary text-white ms-3">
+                        👤 {{ user.get_full_name|default:user.email|truncatechars:18 }}
+                    </span>
+
+            {% else %}
+                <a href="{% url 'users:login' %}" class="btn btn-primary ms-3 btn-sm">Login</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<!-- Header -->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Shop in style</h1>
+            <p class="lead fw-normal text-white-50 mb-0">With this shop homepage template</p>
+        </div>
+    </div>
+</header>
+
+<!-- Filters -->
+<div class="container mt-5">
+    <div class="mb-3">
+        <h3>Filter by</h3>
+    </div>
+    <div class="d-flex gap-2 mb-4">
+        <a class="btn btn-outline-dark" href="{% url 'shop:expensive_product' %}">Expensive</a>
+        <a class="btn btn-outline-dark" href="{% url 'shop:cheap_product' %}">Cheap</a>
+        <a class="btn btn-outline-dark btn-sm text-nowrap" href="{% url 'shop:add_product' %}">Add Product</a>
+    </div>
+</div>
+
+<!-- Product Grid -->
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {% for product in products %}
+                <div class="col mb-5">
+                    <div class="card h-100">
+
+                        {% if product.discount %}
+                            <div class="badge bg-dark text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                        {% endif %}
+
+                        <!-- Product Image -->
+                        <a href="{% url 'shop:product_detail' product_id=product.id %}">
+                            <img class="card-img-top" src="{{ product.image.url }}" alt="{{ product.name }}">
+                        </a>
+
+                        <!-- Product Details -->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <h5 class="fw-bolder">{{ product.name }}</h5>
+                                <p>Average Rating: {{ product.avg_rating|default:"0"|floatformat:2 }}</p>
+
+                                {% if product.discount %}
+                                    <span class="text-muted text-decoration-line-through">${{ product.price }}</span>
+                                    <span>${{ product.discounted_price }}</span>
+                                {% else %}
+                                    <span>${{ product.price }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Product Actions -->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent d-flex justify-content-center">
+                            <a class="btn btn-outline-dark mt-auto" href="{% url 'shop:product_detail' product_id=product.id %}">View product</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+    {% comment %} pagination {% endcomment %}
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Custom pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+
+            <!-- Oldinga -->
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link fw-bold border-0 shadow-sm text-primary" href="?page={{ page_obj.previous_page_number }}">
+                        &laquo;
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link fw-bold border-0 shadow-sm text-secondary">&laquo;</span>
+                </li>
+            {% endif %}
+
+            <!-- Sahifalar -->
+            {% for num in page_obj.paginator.page_range %}
+                {% if page_obj.number == num %}
+                    <li class="page-item active" aria-current="page">
+                        <span class="page-link fw-bold bg-primary border-0 shadow text-white rounded-pill px-3">{{ num }}</span>
+                    </li>
+                {% elif num > page_obj.number|add:"-3" and num < page_obj.number|add:"3" %}
+                    <li class="page-item">
+                        <a class="page-link fw-bold text-primary border-0 shadow-sm rounded-pill px-3" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            <!-- Keyingisi -->
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link fw-bold border-0 shadow-sm text-primary" href="?page={{ page_obj.next_page_number }}">
+                        &raquo;
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link fw-bold border-0 shadow-sm text-secondary">&raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+
+<!-- Footer -->
+<footer class="py-5 bg-dark">
+    <div class="container">
+        <p class="m-0 text-center text-white">Online shop by Oybek , 2025</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'shop/js/scripts.js' %}"></script>
+</body>
+</html>
