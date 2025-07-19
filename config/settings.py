@@ -89,7 +89,14 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 DATABASES = {
-    'default': dj_database_url.config(default=os.getenv('DATABASE_URL'), conn_max_age=600)
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DATABASE_NAME'),  # Name of your PostgreSQL database
+        'USER': os.getenv('DATABASE_USER') , # Username for connecting to the database
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),  # Password for the database user
+        'HOST': os.getenv('DATABASE_HOST'),  # Or the IP address/hostname of your PostgreSQL server
+        'PORT': os.getenv('DATABASE_PORT'),  # Default PostgreSQL port, change if different
+    }
 }
 
 
