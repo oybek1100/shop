@@ -1,0 +1,72 @@
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Mahsulot qo‘shish</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="card shadow-lg rounded-4">
+        <div class="card-header bg-success text-white">
+            <h3 class="mb-0">➕ Yangi mahsulot qo‘shish</h3>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Name -->
+                <div class="mb-3">
+                    <label for="id_name" class="form-label">Mahsulot nomi</label>
+                    {{ form.name|add_class:"form-control" }}
+                </div>
+
+                <!-- Description -->
+                <div class="mb-3">
+                    <label for="id_description" class="form-label">Tavsifi</label>
+                    {{ form.description|add_class:"form-control" }}
+                </div>
+
+                <!-- Price -->
+                <div class="mb-3">
+                    <label for="id_price" class="form-label">Narxi $</label>
+                    <input type="number" step="0.01" name="price" class="form-control" id="id_price" value="{{ form.price.value|default_if_none:'' }}">
+                </div>
+
+                <!-- Image -->
+                <div class="mb-3">
+                    <label for="id_image" class="form-label">Rasm yuklash</label>
+                    {{ form.image|add_class:"form-control" }}
+                </div>
+
+                <!-- Discount -->
+                <div class="mb-3">
+                    <label for="id_discount" class="form-label">Chegirma (%)</label>
+                    {{ form.discount|add_class:"form-control" }}
+                </div>
+
+                <!-- Category -->
+                <div class="mb-3">
+                    <label for="id_category" class="form-label">Kategoriya</label>
+                    {{ form.category|add_class:"form-select" }}
+                </div>
+
+                <!-- Amount -->
+                <div class="mb-3">
+                    <label for="id_amount" class="form-label">Mavjud miqdori</label>
+                    {{ form.amount|add_class:"form-control" }}
+                </div>
+
+                <button type="submit" class="btn btn-success">
+                    💾 Saqlash
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
